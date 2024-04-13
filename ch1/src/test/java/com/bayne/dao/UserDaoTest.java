@@ -1,8 +1,11 @@
 package com.bayne.dao;
 
+import com.bayne.config.UserDaoConfiguration;
 import com.bayne.model.User;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.sql.SQLException;
 
@@ -10,16 +13,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserDaoTest {
 
+    static UserDao sut;
+
+    @BeforeAll
+    static void beforeAll() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(UserDaoConfiguration.class);
+        sut = context.getBean("userDao", UserDao.class);
+    }
+
     @BeforeEach
     void setUp() throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao(new ConnectionMakerImpl());
-        userDao.deleteAll();
+        sut.deleteAll();
     }
 
     @Test
     void add_a_new_user() throws SQLException, ClassNotFoundException {
         // given
-        UserDao sut = new UserDao(new ConnectionMakerImpl());
         User user = new User("id");
         user.setName("name");
         user.setPassword("password");
