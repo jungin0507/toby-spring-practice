@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class UserDaoTest {
 
     @Test
     void add_a_new_user() throws SQLException, ClassNotFoundException {
         // given
-        UserDao sut = new UserDao();
+        UserDao sut = new UserDao(new ConnectionMakerImpl());
         User user = new User("id");
         user.setName("name");
         user.setPassword("password");

@@ -6,9 +6,15 @@ import java.sql.*;
 
 public class UserDao {
 
+    private final ConnectionMaker connectionMaker;
+
+    public UserDao(ConnectionMaker connectionMaker) {
+        this.connectionMaker = connectionMaker;
+    }
+
     public void add(final User user) throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/toby", "root", "1234");
+        Connection con = connectionMaker.makeConnection();
 
         PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)");
         ps.setString(1, user.getId());
@@ -23,7 +29,7 @@ public class UserDao {
 
     public User get(final String id) throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
-        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/toby", "root", "1234");
+        Connection con = connectionMaker.makeConnection();
 
         PreparedStatement ps = con.prepareStatement("select * from user where id = ?");
         ps.setString(1, id);
