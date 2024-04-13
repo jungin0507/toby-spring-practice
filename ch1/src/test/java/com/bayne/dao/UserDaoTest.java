@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
 
@@ -17,7 +18,7 @@ class UserDaoTest {
 
     @BeforeAll
     static void beforeAll() {
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(UserDaoConfiguration.class);
+        GenericXmlApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
         sut = context.getBean("userDao", UserDao.class);
     }
 
