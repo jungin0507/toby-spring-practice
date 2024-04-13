@@ -2,6 +2,7 @@ package com.bayne.dao;
 
 import com.bayne.model.User;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,14 +10,14 @@ import java.sql.SQLException;
 
 public class UserDao {
 
-    private final ConnectionMaker connectionMaker;
+    private final DataSource dataSource;
 
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public UserDao(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
-    public void add(final User user) throws ClassNotFoundException, SQLException {
-        Connection con = connectionMaker.makeConnection();
+    public void add(final User user) throws SQLException {
+        Connection con = dataSource.getConnection();
 
         try (PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)")) {
             ps.setString(1, user.getId());
@@ -28,8 +29,8 @@ public class UserDao {
         }
     }
 
-    public User get(final String id) throws SQLException, ClassNotFoundException {
-        Connection con = connectionMaker.makeConnection();
+    public User get(final String id) throws SQLException {
+        Connection con = dataSource.getConnection();
 
         try (PreparedStatement ps = con.prepareStatement("select * from user where id = ?")) {
             ps.setString(1, id);
@@ -47,8 +48,8 @@ public class UserDao {
         }
     }
 
-    public void deleteAll() throws SQLException, ClassNotFoundException {
-        Connection con = connectionMaker.makeConnection();
+    public void deleteAll() throws SQLException {
+        Connection con = dataSource.getConnection();
 
         try (PreparedStatement ps = con.prepareStatement("delete from user")) {
             ps.executeUpdate();
