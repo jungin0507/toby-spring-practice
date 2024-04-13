@@ -16,34 +16,33 @@ public class UserDao {
         Class.forName("com.mysql.jdbc.Driver");
         Connection con = connectionMaker.makeConnection();
 
-        PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)");
-        ps.setString(1, user.getId());
-        ps.setString(2, user.getName());
-        ps.setString(3, user.getPassword());
+        try(PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)")) {
+            ps.setString(1, user.getId());
+            ps.setString(2, user.getName());
+            ps.setString(3, user.getPassword());
 
-        ps.executeUpdate();
-
-        ps.close();
-        con.close();
+            ps.executeUpdate();
+            con.close();
+        }
     }
 
     public User get(final String id) throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         Connection con = connectionMaker.makeConnection();
 
-        PreparedStatement ps = con.prepareStatement("select * from user where id = ?");
-        ps.setString(1, id);
+        try(PreparedStatement ps = con.prepareStatement("select * from user where id = ?")) {
+            ps.setString(1, id);
 
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        User user = new User(rs.getString("id"));
-        user.setName(rs.getString("name"));
-        user.setPassword(rs.getString("password"));
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            User user = new User(rs.getString("id"));
+            user.setName(rs.getString("name"));
+            user.setPassword(rs.getString("password"));
 
-        rs.close();
-        ps.close();
-        con.close();
+            rs.close();
+            con.close();
 
-        return user;
+            return user;
+        }
     }
 }
