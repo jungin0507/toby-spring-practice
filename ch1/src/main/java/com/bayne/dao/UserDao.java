@@ -16,7 +16,6 @@ public class UserDao {
     }
 
     public void add(final User user) throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
         Connection con = connectionMaker.makeConnection();
 
         try (PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)")) {
@@ -30,7 +29,6 @@ public class UserDao {
     }
 
     public User get(final String id) throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
         Connection con = connectionMaker.makeConnection();
 
         try (PreparedStatement ps = con.prepareStatement("select * from user where id = ?")) {
@@ -50,7 +48,6 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException, ClassNotFoundException {
-        Class.forName("com.mysql.jdbc.Driver");
         Connection con = connectionMaker.makeConnection();
 
         try (PreparedStatement ps = con.prepareStatement("delete from user")) {
