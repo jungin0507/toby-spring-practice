@@ -22,12 +22,12 @@ class UserDaoTest {
     }
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         sut.deleteAll();
     }
 
     @Test
-    void add_a_new_user() throws SQLException {
+    void add_a_new_user() {
         // given
         User user = new User("id");
         user.setName("name");
@@ -41,5 +41,27 @@ class UserDaoTest {
         assertEquals(user.getId(), userFromDb.getId());
         assertEquals(user.getName(), userFromDb.getName());
         assertEquals(user.getPassword(), userFromDb.getPassword());
+    }
+
+    @Test
+    void get_all_users_order_by_id() {
+        // given
+        User user1 = new User("id1");
+        user1.setName("name1");
+        user1.setPassword("password1");
+        sut.add(user1);
+
+        User user2 = new User("id2");
+        user2.setName("name2");
+        user2.setPassword("password2");
+        sut.add(user2);
+
+        // when
+        var users = sut.getAll();
+
+        // then
+        assertEquals(2, users.size());
+        assertEquals(user1.getId(), users.get(0).getId());
+        assertEquals(user2.getId(), users.get(1).getId());
     }
 }

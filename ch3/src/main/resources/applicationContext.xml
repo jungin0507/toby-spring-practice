@@ -17,6 +17,5 @@
 
     <bean id="userDao" class="com.bayne.dao.UserDao">
         <constructor-arg name="dataSource" ref="dataSource"/>
-        <constructor-arg name="jdbcContext" ref="jdbcContext"/>
     </bean>
 </beans>

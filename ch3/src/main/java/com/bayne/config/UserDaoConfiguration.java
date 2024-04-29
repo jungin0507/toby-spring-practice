@@ -17,7 +17,7 @@ public class UserDaoConfiguration {
 
     @Bean
     public UserDao userDao() throws SQLException {
-        return new UserDao(dataSource(), jdbcContext());
+        return new UserDao(dataSource());
     }
 
     @Bean

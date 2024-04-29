@@ -1,55 +1,48 @@
 package com.bayne.dao;
 
-import com.bayne.dao.strategy.StatementStrategy;
 import com.bayne.model.User;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Types;
+import java.util.List;
 
 public class UserDao {
 
-    private final DataSource dataSource;
+    private final JdbcTemplate jdbcTemplate;
 
-    private final JdbcContext jdbcContext;
+    private final RowMapper<User> userMapper = (rs, rowNum) -> {
+        User user = new User(rs.getString("id"));
+        user.setName(rs.getString("name"));
+        user.setPassword(rs.getString("password"));
+        return user;
+    };
 
-    public UserDao(DataSource dataSource, JdbcContext jdbcContext) {
-        this.dataSource = dataSource;
-        this.jdbcContext = jdbcContext;
+    public UserDao(DataSource dataSource) {
+        this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void add(final User user) throws SQLException {
-        jdbcContext.workWithStatementStrategy(con -> {
-            PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-            return ps;
-        });
+    public void add(final User user) {
+        jdbcTemplate.update("insert into user(id, name, password) values(?, ?, ?)",
+                user.getId(),
+                user.getName(),
+                user.getPassword());
     }
 
-    public User get(final String id) throws SQLException {
-        Connection con = dataSource.getConnection();
-
-        try (PreparedStatement ps = con.prepareStatement("select * from user where id = ?")) {
-            ps.setString(1, id);
-
-            ResultSet rs = ps.executeQuery();
-            rs.next();
-            User user = new User(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
-
-            rs.close();
-            con.close();
-
-            return user;
-        }
+    public User get(final String id) {
+        return jdbcTemplate.queryForObject("select id, name, password from user where id = ?",
+                new Object[]{id},
+                new int[]{Types.VARCHAR},
+                this.userMapper);
     }
 
-    public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(con -> con.prepareStatement("delete from user"));
+    public List<User> getAll() {
+        return jdbcTemplate.query("select id, name, password from user order by id",
+                this.userMapper);
+    }
+
+    public void deleteAll() {
+        jdbcTemplate.update("delete from user");
     }
 }
