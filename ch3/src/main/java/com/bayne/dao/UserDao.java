@@ -13,19 +13,15 @@ public class UserDao {
 
     private final DataSource dataSource;
 
-    public UserDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+    private final JdbcContext jdbcContext;
 
-    private void jdbcContextWithStatementStrategy(final StatementStrategy stmt) throws SQLException {
-        try (Connection con = dataSource.getConnection();
-             PreparedStatement ps = stmt.makePreparedStatement(con)) {
-            ps.executeUpdate();
-        }
+    public UserDao(DataSource dataSource, JdbcContext jdbcContext) {
+        this.dataSource = dataSource;
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
-        jdbcContextWithStatementStrategy(con -> {
+        jdbcContext.workWithStatementStrategy(con -> {
             PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
@@ -54,6 +50,6 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(con -> con.prepareStatement("delete from user"));
+        jdbcContext.workWithStatementStrategy(con -> con.prepareStatement("delete from user"));
     }
 }

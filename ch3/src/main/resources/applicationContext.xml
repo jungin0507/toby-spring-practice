@@ -11,7 +11,12 @@
         <property name="password" value="1234"/>
     </bean>
 
+    <bean id="jdbcContext" class="com.bayne.dao.JdbcContext">
+        <constructor-arg name="dataSource" ref="dataSource"/>
+    </bean>
+
     <bean id="userDao" class="com.bayne.dao.UserDao">
         <constructor-arg name="dataSource" ref="dataSource"/>
+        <constructor-arg name="jdbcContext" ref="jdbcContext"/>
     </bean>
 </beans>
