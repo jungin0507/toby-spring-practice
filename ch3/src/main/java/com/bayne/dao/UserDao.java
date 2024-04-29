@@ -1,5 +1,6 @@
 package com.bayne.dao;
 
+import com.bayne.dao.strategy.StatementStrategy;
 import com.bayne.model.User;
 
 import javax.sql.DataSource;
@@ -14,6 +15,13 @@ public class UserDao {
 
     public UserDao(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    private void jdbcContextWithStatementStrategy(final StatementStrategy stmt) throws SQLException {
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement ps = stmt.makePreparedStatement(con)) {
+            ps.executeUpdate();
+        }
     }
 
     public void add(final User user) throws SQLException {
@@ -49,11 +57,6 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection con = dataSource.getConnection();
-
-        try (PreparedStatement ps = con.prepareStatement("delete from user")) {
-            ps.executeUpdate();
-            con.close();
-        }
+        jdbcContextWithStatementStrategy(con -> con.prepareStatement("delete from user"));
     }
 }
