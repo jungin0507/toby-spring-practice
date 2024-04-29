@@ -25,16 +25,13 @@ public class UserDao {
     }
 
     public void add(final User user) throws SQLException {
-        Connection con = dataSource.getConnection();
-
-        try (PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)")) {
+        jdbcContextWithStatementStrategy(con -> {
+            PreparedStatement ps = con.prepareStatement("insert into user(id, name, password) values(?, ?, ?)");
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
             ps.setString(3, user.getPassword());
-
-            ps.executeUpdate();
-            con.close();
-        }
+            return ps;
+        });
     }
 
     public User get(final String id) throws SQLException {
