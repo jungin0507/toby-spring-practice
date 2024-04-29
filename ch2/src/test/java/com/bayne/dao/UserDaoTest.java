@@ -5,23 +5,24 @@ import com.bayne.model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(locations = "/applicationContext.xml")
 class UserDaoTest {
 
-    static UserDao sut;
-
-    @BeforeAll
-    static void beforeAll() {
-        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-        sut = context.getBean("userDao", UserDao.class);
-    }
+    @Autowired
+    UserDao sut;
 
     @BeforeEach
     void setUp() throws SQLException {

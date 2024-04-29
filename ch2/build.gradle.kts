@@ -14,6 +14,7 @@ dependencies {
     implementation(group = "org.springframework", name = "spring-jdbc", version = "6.1.6")
     implementation(group = "com.mysql", name = "mysql-connector-j", version = "8.3.0")
 
+    testImplementation(group = "org.springframework", name = "spring-test", version = "6.1.6")
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
